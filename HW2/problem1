@@ -1,0 +1,30 @@
+(1) person(X) :- child(X). 
+X is a person if X is a child
+
+(2) :- child(X), age(X, Y), Y >= 18.
+It is impossivle that X is a child and X's age is Y and Y is bigger or equal to 18.
+
+(3) -age(X, N) :- age(X, N1), N != N1. 
+X's age is N is false if X's age is N1 and N is different from N1
+
+(4) age(leo, 35) | age(leo, 36). 
+Leo's age is 35 or 36
+
+(5) adult(X) :- person(X), not child(X). 
+X is an adult if X is a person and there is no reason to believe that X is a child
+
+
+Criteriaon          Pros                                    Cons   
+
+Readablity          people can translage the code in to     sometimes the logic is complex in 
+                    english if they know the syntax         some code
+                    
+writeability        there is not too much rules in syntax         
+
+reliability         running ASP in computer does not needs  
+                    too much computing resourse, so it is
+                    not easy to get the computer down
+
+cost                can work on almost of the devices       people needs enough time to learn it
+
+

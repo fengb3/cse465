@@ -1,0 +1,73 @@
+person(mary).
+person(saul).
+person(monica).
+person(dan).
+person(melinda).
+person(andrew).
+person(ben).
+person(carmen).
+person(david).
+person(ethan).
+person(frank).
+
+sex(female).
+sex(male).
+
+sex_of(mary, female).
+sex_of(monica, female).
+sex_of(melinda, female).
+sex_of(carmen, female).
+
+% Closed World Assumption
+sex_of(X, male) :- person(X), not sex_of(X, female).
+
+mother(mary, andrew).
+mother(mary, ben).
+father(saul, andrew).
+father(saul, ben).
+
+mother(monica, carmen).
+mother(monica, david).
+mother(monica, ethan).
+father(dan, carmen).
+father(dan, david).
+father(dan, ethan).
+
+mother(melinda, frank).
+father(dan, frank).
+
+married(monica, saul).
+married(melinda, dan).
+
+% married is a symmetric relation
+married(X, Y) :- married(Y, X).
+
+% ---------------------------------------------------
+% predicateds parent
+parent(X,Y) :- mother(X,Y).
+parent(X,Y) :- father(X,Y).
+
+% TODO:
+% full_brother(X, Y) ?X is a full brother of Y, 
+%                      i.e., a brother with the same mother and father as Y
+full_brother(X,Y) :- mother(Z,Y), mother(Z,X), 
+	              father(W,Y), father(W,X), 
+	              X !=Y, sex_of(X,male).
+
+% TODO:
+% half_brother(X, Y) ?X is a half brother of Y, 
+%                      i.e., a brother related through one parent only
+% half_son(X) :- mother(Z,X), father(W,X),married(Z,W),sex_of(X,male).
+
+half_brother(X,Y) :- parent(P,X), parent(P,Y), 
+		not full_brother(X, Y), 
+		X != Y, sex_of(X,male).
+% TODO
+%11 step_brother(X, Y) ?X is a step brother of Y, i.e., 
+%                      a son of one's stepparent by another partner
+
+% You can add helper predicates and rules as needed
+step_brother(X,Y) :- parent(W,X), parent(Z,Y),married(Z,W),
+		X != Y, sex_of(X,male), 
+		not full_brother(X, Y), not half_brother(X,Y).
+

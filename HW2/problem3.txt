@@ -1,0 +1,91 @@
+% Run using the command
+% dlv problem3.txt -filter=seating
+% Given a round table with six chairs and a group of six people, 
+% some of whom are married and some of whom do not like each other, 
+% find a seating assignment for members of this group such that husbands and wives are seated next to each other 
+% and no neighbors dislike each other. 
+% Marriage is a symmetric relationship, 
+% but disliking is not necessarily symmetric 
+% (e.g., person A dislikes B, but B may like A). 
+ 
+#const n=6.
+person(1..n).
+chair(1..n).
+%
+% -----------------------------------------------------
+% Test problem
+married(1, 2).
+married(3, 4).
+dislikes(1, 3).
+dislikes(1, 4).
+dislikes(1, 5).
+dislikes(2, 4).
+dislikes(2, 5).
+dislikes(2, 6).
+dislikes(3, 5).
+dislikes(3, 6).
+% End of test problem
+% -----------------------------------------------------
+% Instruction:
+% Use the predicate seated(P, C) to say that person P is seating on chair 
+% number C
+%%% GENERATE candidate solutions
+% TODO by you
+% start the generator
+% ------------------------------------------------------
+% seated(P, C) – person P is sitting on chair number C 
+seated(P, C) | -seated(P, C) :- person(P), chair(C).
+
+% make sure every chair has assigned at least one person
+has_person(C) :- seated(P, C).
+
+% each person must have a chair
+:- chair(C), not has_person(C).
+
+% one chair cannot have 2 differetn chair
+:- seated(P1, C), seated(P2, C), P1 != P2.
+
+% make sure every person siting at least one chair
+has_chair(P) :- seated(P, C).
+
+% each chair must have a person sitting on 
+:- person(P), not has_chair(P).
+
+% one person cannot have 2 different chair
+:- seated(P, C1), seated(P, C2), C1 != C2.
+
+% end the generator
+% ---------------------------------------------------------
+
+%%% TEST whether a candidate solution is a real solution or not
+% TODO by you
+
+% married (A, B) means marrid(B, A).
+married(A, B) :- married(B, A).
+
+% set up the neighbors
+%neighbor(1, 2).
+%neighbor(2, 3).
+%neighbor(3, 4).
+%neighbor(4, 5).
+%neighbor(5, 6).
+%neighbor(6, 1).
+
+%neighbor(C1, C2) :- neighbor(C2, C1).
+
+neighbor(X,Y) :- neighbor(Y,X).
+neighbor(1..n, 1..n).
+neighbor(c1,c2) :-chair(c1),chair(c2),c2=c1+1.
+
+% married people should seat together
+:- married(P1, P2), seated(P1, C1), seated(P2, C2), not neighbor(C1, C2).
+
+% people dont want to seat with the people they dislike.
+:- dislikes(P1, P2), seated(P1, C1), seated(P2,  C2), neighbor(C1, C2).
+
+% -----------------------------------------------------
+% For easy display
+% seating(P1, P2, P3, P4, P5, P6) says that person P1 sits on chair 1, P2 
+% on chair 2, etc.
+seating(P1, P2, P3, P4, P5, P6) :- seated(P1, 1), seated(P2, 2), 
+seated(P3, 3), seated(P4, 4), seated(P5, 5), seated(P6, 6).
