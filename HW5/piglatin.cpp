@@ -2,12 +2,24 @@
 
 #include <iostream>
 #include <cstring>
+#include <cctype>
 
 using namespace std;
 
+/* some globale variables*/
 const int MAX = 43;
+bool isSwitched = false;
+   // 2 char[] contains vowel letter for different purposes
+const char vList1[] = "AEIOUaeiou";
+const char vList2[] = "AEIOUWYaeiouwy";
 
+/* declariations for functions*/
 char* ToPigLatin(char* word);
+bool firstVowel(char *word);
+void switchChar(char *str);
+bool inList1(char *c);
+bool inList2(char *c);
+char* append(char * a, char * b);
 
 int main()
 {
@@ -37,6 +49,60 @@ int main()
    return 0;
 }
 
+bool inList1(char * c){
+   for(auto vowel: vList1){
+      if (c[0] == vowel){
+         return true;
+      }
+   }
+   return false;
+}
+
+bool inList2(char * c){
+   for(auto vowel: vList2){
+      if (c[0] == vowel){
+         return true;
+      }
+   }
+   return false;
+}
+
+bool firstVowel(char *word){
+   if(inList1(word)){
+      return true;
+   }
+   else if(inList2(word)){
+      return isSwitched;
+   }
+   else{
+      return false;
+   }
+}
+
+
+/**
+ * this method moves the first letter in an char to the end
+ * set isSwitched to true
+ * @param char* str: the char to be operated 
+ */
+void switchChar(char * str) {
+   char first = str[0];
+
+   bool isUpper = isupper(first);
+
+   char re[strlen(str)];
+
+   for (int i = 1; i < strlen(str); i++){
+      str[i - 1] = str[i];
+   }
+
+   str[strlen(str) - 1] = tolower(first);
+
+   if(isUpper)
+      str[0] = toupper(str[0]);
+
+   isSwitched = true;
+}
 
 /**
  * 1. A word is a consecutive sequence of letters (a-z, A-Z) or apostrophes.
@@ -52,8 +118,31 @@ int main()
  * 5. If the original word is capitalized, 
  *    the new Pig Latin version of the word should be capitalized in the first letter 
  *    (i.e. the previous capital letter may not be capitalized any more). 
+ * 
+ * @param char* word the char to be operated
  */
 char* ToPigLatin(char* word){
    // i dont know what to do here
-   &word += '2';
+   char voappend[] = "way";
+   char nonvoappend[] = "ay";
+   int len = strlen(word);
+   if (!isSwitched && firstVowel(word)){
+      word[len] = 'w';
+      word[len+1] = 'a';
+      word[len+2] = 'y';
+      word[len+3] = '\0';
+      isSwitched = false;
+      return word;
+   }
+   else if (isSwitched && firstVowel(word)){
+      word[len] = 'a';
+      word[len+1] = 'y';
+      word[len+2] = '\0';
+      isSwitched = false;
+      return word;
+   }
+   else{
+      switchChar(word);
+      return ToPigLatin(word);
+   }
 }
